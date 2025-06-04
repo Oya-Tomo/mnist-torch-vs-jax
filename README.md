@@ -2,10 +2,12 @@
 
 ## Comparison
 
-- Jax: mnist example from official flax quickstart.
-- Pytorch: translated Jax example with Claude Sonnet 4.
+Mnist train script
 
-> 💡 Fix some error manualy & changed optimizer from SGD to Adam
+- batch size: 32
+- epochs: 10
+
+> 💡 Used common dataset
 
 ### Result
 
@@ -14,4 +16,4 @@
 
 ### Discussion
 
-- This result show that Jax mnist example is faster than pytorch mnist.
+- This result show that Pytorch mnist example is faster than Jax mnist.

@@ -1,6 +1,9 @@
+import jax
 import numpy as np
+import torch
 from torchvision import transforms
 import torchvision
+from typing import Iterator
 
 
 def get_datasets(channel_last=False):
@@ -35,6 +38,24 @@ def get_datasets(channel_last=False):
         test_images = test_images.transpose(0, 3, 2, 1)
 
     return train_images, train_labels, test_images, test_labels
+
+
+def get_batches_torch(
+    images, labels, batch_size=32
+) -> Iterator[tuple[torch.Tensor, torch.Tensor]]:
+    ridx = torch.randperm(len(images))
+    for i in range(len(images) // batch_size):
+        idx = ridx[i * batch_size : (i + 1) * batch_size]
+        yield images[idx], labels[idx]
+
+
+def get_batches_jax(
+    images, labels, batch_size=32, key=None
+) -> Iterator[tuple[jax.Array, jax.Array]]:
+    ridx = jax.random.permutation(key, len(images))
+    for i in range(len(images) // batch_size):
+        idx = ridx[i * batch_size : (i + 1) * batch_size]
+        yield images[idx], labels[idx]
 
 
 if __name__ == "__main__":

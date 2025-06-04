@@ -35,6 +35,7 @@ class CNN(nnx.Module):
             rngs=rngs,
         )
 
+    @nnx.jit
     def __call__(self, x) -> jax.Array:
         x = self.conv1(x)
         x = nnx.relu(x)
@@ -61,6 +62,7 @@ metrics = nnx.MultiMetric(
 )
 
 
+@nnx.jit
 def loss_fn(model: nnx.Module, images: jax.Array, labels: jax.Array):
     logits = model(images)
     loss = optax.softmax_cross_entropy_with_integer_labels(

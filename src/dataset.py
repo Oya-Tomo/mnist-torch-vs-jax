@@ -44,18 +44,26 @@ def get_batches_torch(
     images, labels, batch_size=32
 ) -> Iterator[tuple[torch.Tensor, torch.Tensor]]:
     ridx = torch.randperm(len(images))
+    shuffled_images = images[ridx]
+    shuffled_labels = labels[ridx]
     for i in range(len(images) // batch_size):
-        idx = ridx[i * batch_size : (i + 1) * batch_size]
-        yield images[idx], labels[idx]
+        yield (
+            shuffled_images[i * batch_size : (i + 1) * batch_size],
+            shuffled_labels[i * batch_size : (i + 1) * batch_size],
+        )
 
 
 def get_batches_jax(
     images, labels, batch_size=32, key=None
 ) -> Iterator[tuple[jax.Array, jax.Array]]:
     ridx = jax.random.permutation(key, len(images))
+    shuffled_images = images[ridx]
+    shuffled_labels = labels[ridx]
     for i in range(len(images) // batch_size):
-        idx = ridx[i * batch_size : (i + 1) * batch_size]
-        yield images[idx], labels[idx]
+        yield (
+            shuffled_images[i * batch_size : (i + 1) * batch_size],
+            shuffled_labels[i * batch_size : (i + 1) * batch_size],
+        )
 
 
 if __name__ == "__main__":

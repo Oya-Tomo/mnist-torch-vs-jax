@@ -1,3 +1,5 @@
+import time
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -130,6 +132,8 @@ def main():
         "test_accuracy": [],
     }
 
+    start_time = time.perf_counter_ns()
+
     for epoch in range(num_epochs):
         model.train()
         train_loss = 0.0
@@ -171,6 +175,8 @@ def main():
         )
         print(f"Test  - Loss: {test_loss_avg:.4f}, Accuracy: {test_accuracy*100:.2f}%")
         print("-" * 50)
+
+    print(f"Training completed in {time.perf_counter_ns() - start_time} ns")
 
     # Plot results
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))

@@ -1,3 +1,5 @@
+import time
+
 import jax
 import jax.numpy as jnp  # JAX NumPy
 from flax import linen as nn  # Linen API
@@ -145,6 +147,9 @@ metrics_history = {
     "test_loss": [],
     "test_accuracy": [],
 }
+
+start_time = time.perf_counter_ns()
+
 for step, batch in enumerate(train_ds.as_numpy_iterator()):
 
     # Run optimization steps over training batches and compute batch metrics
@@ -178,6 +183,8 @@ for step, batch in enumerate(train_ds.as_numpy_iterator()):
             f"loss: {metrics_history['test_loss'][-1]}, "
             f"accuracy: {metrics_history['test_accuracy'][-1] * 100}"
         )
+
+print(f"Training completed in {time.perf_counter_ns() - start_time} ns")
 
 import matplotlib.pyplot as plt  # Visualization
 

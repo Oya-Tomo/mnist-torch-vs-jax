@@ -7,7 +7,7 @@ import optax
 
 from dataset import get_batches_jax, get_datasets
 
-device = jax.devices()[0]  # Use the first available device (CPU or GPU)
+device = jax.devices()[0]
 print(f"Using device: {device}")
 
 
@@ -122,7 +122,6 @@ test_labels = jnp.array(test_labels, dtype=jnp.int32, device=device)
 start_time = time.perf_counter_ns()
 print("Training started...")
 
-wut = []
 
 for epoch in range(epochs):
     for images, labels in get_batches_jax(
@@ -164,7 +163,6 @@ for epoch in range(epochs):
 end_time = time.perf_counter_ns()
 print(f"Training completed in {(end_time - start_time) / 1e9:.10f} seconds.")
 
-# Save metrics history to a file
 import json
 
 with open("result/jax_benchmark.json", "w") as f:

@@ -7,6 +7,9 @@ import optax
 
 from dataset import get_batches_jax, get_datasets
 
+device = jax.devices()[0]  # Use the first available device (CPU or GPU)
+print(f"Using device: {device}")
+
 
 class CNN(nnx.Module):
     def __init__(self, rngs: nnx.Rngs):
@@ -102,43 +105,52 @@ metrics_history = {
     "train_accuracy": [],
     "test_loss": [],
     "test_accuracy": [],
+    "train_step_time": [],
+    "eval_step_time": [],
 }
 
 epochs = 10
 batch_size = 32
 
 train_images, train_labels, test_images, test_labels = get_datasets(channel_last=True)
-train_images = jnp.array(train_images, dtype=jnp.float32)
-train_labels = jnp.array(train_labels, dtype=jnp.int32)
-test_images = jnp.array(test_images, dtype=jnp.float32)
-test_labels = jnp.array(test_labels, dtype=jnp.int32)
+train_images = jnp.array(train_images, dtype=jnp.float32, device=device)
+train_labels = jnp.array(train_labels, dtype=jnp.int32, device=device)
+test_images = jnp.array(test_images, dtype=jnp.float32, device=device)
+test_labels = jnp.array(test_labels, dtype=jnp.int32, device=device)
+
 
 start_time = time.perf_counter_ns()
 print("Training started...")
+
+wut = []
 
 for epoch in range(epochs):
     for images, labels in get_batches_jax(
         train_images,
         train_labels,
         batch_size=batch_size,
-        key=jax.random.PRNGKey(epoch),
+        key=jax.random.key(epoch),
     ):
+        t = time.perf_counter_ns()
         train_step(cnn, optimizer, metrics, images, labels)
+        metrics_history["train_step_time"].append(time.perf_counter_ns() - t)
 
     for metric, value in metrics.compute().items():
-        metrics_history[f"train_{metric}"].append(value)
+        metrics_history[f"train_{metric}"].append(float(value))
     metrics.reset()
 
     for images, labels in get_batches_jax(
         test_images,
         test_labels,
         batch_size=batch_size,
-        key=jax.random.PRNGKey(epoch + 1000),
+        key=jax.random.key(epoch + 1000),
     ):
+        t = time.perf_counter_ns()
         eval_step(cnn, metrics, images, labels)
+        metrics_history["eval_step_time"].append(time.perf_counter_ns() - t)
 
     for metric, value in metrics.compute().items():
-        metrics_history[f"test_{metric}"].append(value)
+        metrics_history[f"test_{metric}"].append(float(value))
     metrics.reset()
 
     print(
@@ -151,3 +163,9 @@ for epoch in range(epochs):
 
 end_time = time.perf_counter_ns()
 print(f"Training completed in {(end_time - start_time) / 1e9:.10f} seconds.")
+
+# Save metrics history to a file
+import json
+
+with open("result/jax_benchmark.json", "w") as f:
+    json.dump(metrics_history, f, indent=4)

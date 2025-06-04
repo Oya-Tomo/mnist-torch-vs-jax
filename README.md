@@ -1,19 +1,15 @@
 # Pytorch vs Jax
 
-## Comparison
+## Comparison 1: Weight update speed
 
-Mnist train script
+### Jax
 
-- batch size: 32
-- epochs: 10
+- 1st step: 2743198883 ns
+- 2nd step: 730498320 ns
+- avg from 3rd: 812424.6259867719 ns
 
-> 💡 Used common dataset
+### Pytorch
 
-### Result
-
-- Jax: 39.1371998140 [sec]
-- Pytorch: 28.6518114640 [sec]
-
-### Discussion
-
-- This result show that Pytorch mnist example is faster than Jax mnist.
+- 1st step: 258808069 ns
+- 2nd step: 2161421 ns
+- avg from 3rd: 1218887.3912417325 ns

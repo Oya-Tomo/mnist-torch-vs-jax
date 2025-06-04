@@ -68,13 +68,27 @@ if __name__ == "__main__":
     import time
 
     t = time.perf_counter_ns()
-    for images, labels in get_batches_torch(train_images, train_labels, batch_size=32):
+    for i, (images, labels) in enumerate(
+        get_batches_torch(train_images, train_labels, batch_size=32)
+    ):
         pass
-    print("Torch batch time:", (time.perf_counter_ns() - t) / 1e6, "ms")
+    print(
+        "Torch batch time:", (time.perf_counter_ns() - t) / 1e6, "ms", "batches:", i + 1
+    )
 
     t = time.perf_counter_ns()
     for images, labels in get_batches_jax(
         train_images, train_labels, batch_size=32, key=jax.random.PRNGKey(0)
     ):
         pass
-    print("JAX batch time:", (time.perf_counter_ns() - t) / 1e6, "ms")
+    print(
+        "JAX batch time:", (time.perf_counter_ns() - t) / 1e6, "ms", "batches:", i + 1
+    )
+
+    t = time.perf_counter_ns()
+    ridx = torch.randperm(len(train_images))
+    print("Torch random permutation time:", (time.perf_counter_ns() - t) / 1e6, "ms")
+
+    t = time.perf_counter_ns()
+    ridx = jax.random.permutation(jax.random.PRNGKey(0), len(train_images))
+    print("JAX random permutation time:", (time.perf_counter_ns() - t) / 1e6, "ms")

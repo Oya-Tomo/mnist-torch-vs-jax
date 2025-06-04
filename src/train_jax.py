@@ -6,7 +6,6 @@ from flax import nnx
 from flax.training import train_state  # Useful dataclass to keep train state
 from flax import struct  # Flax dataclasses
 import optax
-from functools import partial
 from clu import metrics
 
 from dataset import get_datasets
@@ -28,12 +27,6 @@ class CNN(nnx.Module):
             padding="VALID",
             rngs=rngs,
         )
-        self.avg_pool = partial(
-            nnx.avg_pool,
-            window_shape=(2, 2),
-            strides=(2, 2),
-            padding="VALID",
-        )
         self.fc1 = nnx.Linear(
             in_features=64 * 5 * 5,
             out_features=256,
@@ -48,10 +41,10 @@ class CNN(nnx.Module):
     def __call__(self, x):
         x = self.conv1(x)
         x = nnx.relu(x)
-        x = self.avg_pool(x)
+        x = nnx.avg_pool(x, window_shape=(2, 2), strides=(2, 2), padding="VALID")
         x = self.conv2(x)
         x = nnx.relu(x)
-        x = self.avg_pool(x)
+        x = nnx.avg_pool(x, window_shape=(2, 2), strides=(2, 2), padding="VALID")
         x = x.reshape((x.shape[0], -1))
         x = self.fc1(x)
         x = nnx.relu(x)

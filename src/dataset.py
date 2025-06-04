@@ -64,3 +64,17 @@ if __name__ == "__main__":
     print("Train labels shape:", train_labels.shape)
     print("Test images shape:", test_images.shape)
     print("Test labels shape:", test_labels.shape)
+
+    import time
+
+    t = time.perf_counter_ns()
+    for images, labels in get_batches_torch(train_images, train_labels, batch_size=32):
+        pass
+    print("Torch batch time:", (time.perf_counter_ns() - t) / 1e6, "ms")
+
+    t = time.perf_counter_ns()
+    for images, labels in get_batches_jax(
+        train_images, train_labels, batch_size=32, key=jax.random.PRNGKey(0)
+    ):
+        pass
+    print("JAX batch time:", (time.perf_counter_ns() - t) / 1e6, "ms")

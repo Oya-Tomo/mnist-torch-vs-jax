@@ -1,3 +1,4 @@
+import json
 import time
 
 import jax
@@ -163,7 +164,6 @@ for epoch in range(epochs):
 end_time = time.perf_counter_ns()
 print(f"Training completed in {(end_time - start_time) / 1e9:.10f} seconds.")
 
-import json
 
 with open("result/jax_benchmark.json", "w") as f:
     json.dump(metrics_history, f, indent=4)

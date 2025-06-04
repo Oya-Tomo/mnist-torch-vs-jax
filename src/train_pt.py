@@ -1,3 +1,4 @@
+import json
 import time
 
 import torch
@@ -87,6 +88,8 @@ metrics_history = {
     "train_accuracy": [],
     "test_loss": [],
     "test_accuracy": [],
+    "train_step_time": [],
+    "eval_step_time": [],
 }
 
 epochs = 10
@@ -107,7 +110,9 @@ for epoch in range(epochs):
         train_labels,
         batch_size,
     ):
+        t = time.perf_counter_ns()
         train_step(cnn, optimizer, metrics, images, labels)
+        metrics_history["train_step_time"].append(time.perf_counter_ns() - t)
 
     for metric, value in metrics.compute().items():
         metrics_history[f"train_{metric}"].append(value)
@@ -118,7 +123,9 @@ for epoch in range(epochs):
         test_labels,
         batch_size,
     ):
+        t = time.perf_counter_ns()
         eval_step(cnn, metrics, images, labels)
+        metrics_history["eval_step_time"].append(time.perf_counter_ns() - t)
 
     for metric, value in metrics.compute().items():
         metrics_history[f"test_{metric}"].append(value)
@@ -134,3 +141,7 @@ for epoch in range(epochs):
 
 end_time = time.perf_counter_ns()
 print(f"Training completed in {(end_time - start_time) / 1e9:.10f} seconds.")
+
+
+with open("result/jax_benchmark.json", "w") as f:
+    json.dump(metrics_history, f, indent=4)

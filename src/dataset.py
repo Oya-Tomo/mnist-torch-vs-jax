@@ -3,7 +3,7 @@ from torchvision import transforms
 import torchvision
 
 
-def get_datasets(channel_first=False):
+def get_datasets(channel_last=False):
     transform = transforms.Compose([transforms.ToTensor()])
 
     train_dataset = torchvision.datasets.MNIST(
@@ -30,9 +30,9 @@ def get_datasets(channel_first=False):
     test_images = np.array(test_images)  # Shape: (10000, 1, 28, 28)
     test_labels = np.array(test_labels)
 
-    if channel_first:
-        train_images = train_images.transpose(0, 3, 1, 2)
-        test_images = test_images.transpose(0, 3, 1, 2)
+    if channel_last:
+        train_images = train_images.transpose(0, 3, 2, 1)
+        test_images = test_images.transpose(0, 3, 2, 1)
 
     return train_images, train_labels, test_images, test_labels
 

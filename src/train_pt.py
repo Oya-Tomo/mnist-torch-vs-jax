@@ -115,7 +115,7 @@ for epoch in range(epochs):
         metrics_history["train_step_time"].append(time.perf_counter_ns() - t)
 
     for metric, value in metrics.compute().items():
-        metrics_history[f"train_{metric}"].append(value)
+        metrics_history[f"train_{metric}"].append(float(value))
     metrics.reset()
 
     for images, labels in get_batches_torch(
@@ -128,7 +128,7 @@ for epoch in range(epochs):
         metrics_history["eval_step_time"].append(time.perf_counter_ns() - t)
 
     for metric, value in metrics.compute().items():
-        metrics_history[f"test_{metric}"].append(value)
+        metrics_history[f"test_{metric}"].append(float(value))
     metrics.reset()
 
     print(

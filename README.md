@@ -34,10 +34,12 @@ for images, labels in get_batches_[*](
 
 ### Jax
 
-- for loop duration: 2768.744654 ms
+- for loop duration
+  - 1st step: 2451.042134 ms
+  - after: 664.91307 ms
 - random permutation time: 0.633029 ms
 
 ### Pytorch
 
-- for loop duration: 49.750045 ms
+- for loop duration: 39.40721 ms
 - random permutation time: 0.594493 ms

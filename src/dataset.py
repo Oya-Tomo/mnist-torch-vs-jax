@@ -42,7 +42,7 @@ def get_datasets(channel_last=False):
 
 
 def get_batches_torch(
-    images, labels, batch_size=32
+    images: torch.Tensor, labels: torch.Tensor, batch_size: int = 32
 ) -> Iterator[tuple[torch.Tensor, torch.Tensor]]:
     ridx = torch.randperm(len(images))
     shuffled_images = images[ridx]

@@ -1,4 +1,5 @@
 import jax
+import jax.numpy as jnp
 import numpy as np
 import torch
 from torchvision import transforms
@@ -54,7 +55,7 @@ def get_batches_torch(
 
 
 def get_batches_jax(
-    images, labels, batch_size=32, key=None
+    images: jax.Array, labels: jax.Array, batch_size: int = 32, key=None
 ) -> Iterator[tuple[jax.Array, jax.Array]]:
     ridx = jax.random.permutation(key, len(images))
     shuffled_images = images[ridx]
@@ -75,18 +76,29 @@ if __name__ == "__main__":
 
     import time
 
+    images_torch = torch.tensor(train_images)
+    labels_torch = torch.tensor(train_labels)
     t = time.perf_counter_ns()
     for i, (images, labels) in enumerate(
-        get_batches_torch(train_images, train_labels, batch_size=32)
+        get_batches_torch(
+            images_torch,
+            labels_torch,
+            batch_size=32,
+        )
     ):
         pass
     print(
         "Torch batch time:", (time.perf_counter_ns() - t) / 1e6, "ms", "batches:", i + 1
     )
 
+    images_jax = jnp.array(train_images)
+    labels_jax = jnp.array(train_labels)
     t = time.perf_counter_ns()
     for images, labels in get_batches_jax(
-        train_images, train_labels, batch_size=32, key=jax.random.PRNGKey(0)
+        images_jax,
+        labels_jax,
+        batch_size=32,
+        key=jax.random.PRNGKey(0),
     ):
         pass
     print(
